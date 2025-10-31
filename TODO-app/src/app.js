@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     individualTodo.setAttribute("dataId", task.id);
     individualTodo.innerHTML = `<div class="individualTodo flex justify-around items-center h-12 bg-[#F5F5F5] m-2 rounded-xl ">
       <i class="fa-regular fa-circle-check text-2xl text-[#EF9B0F] cursor-pointer ml-4 checkBtn"></i>
-      <p class="todo mx-auto">${task.text}</p>
+      <p class='todo mx-auto ${task.completed ? "completed" : ""}'>${task.text}</p>
       <i class="fa-solid fa-pencil mx-4 cursor-pointer editBtn"></i>
       <i class="fa-regular fa-trash-can text-2xl text-[#FE6F5E] cursor-pointer mr-4 deleteBtn"></i>
     </div>`
@@ -42,13 +42,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   todosList.addEventListener("click", (e) => {
-    const textData = e.target.closest(".individualTodo").querySelector(".todo")
     if (e.target.classList.contains("checkBtn")) {
-      if (todosArr.id === textData.id) todosArr.completed = !completed;
+      // get parent li element
+      const parentTodo = e.target.closest("li");
+      const clickedId = Number(parentTodo.getAttribute("dataId"));
+
+      // finding the matching todo object in the array
+      const matchingTodo = todosArr.find(todo => todo.id === clickedId)
+
+      if (matchingTodo) {
+        matchingTodo.completed = !matchingTodo.completed
+      }
+
+      const textData = parentTodo.querySelector(".todo")
       textData.classList.toggle("completed")
-      // console.log(todosList.completed)
-      saveItems()
+      console.log(clickedId)
+      console.log(matchingTodo)
     }
+    saveItems()
   })
 
   todosArr.forEach(task => renderTasks(task))
